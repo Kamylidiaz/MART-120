@@ -1,0 +1,16 @@
+
+div{
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    color: mediumpurple;
+}
+
+.myClass{
+    color: coral;
+    font-weight: bold;
+}
+
+#myID{
+    color: blueviolet;
+    font-stretch: extra-expanded;
+}
+ background-image:url("https://img.freepik.com/premium-photo/very-fine-textured-watercolor-blank-canvas_1000823-14580.jpg") 
