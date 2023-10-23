@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Contact Us</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXn2x2o5b5b6F5F5F5F5F5F5F5"
+        crossorigin=" anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+    </script>
+    <script>
+        function checkboxes() {
+            var firstName = document.getElementById("fname").value;
+            var lastName = document.getElementById("lname").value;
+            var email = document.getElementById("email").value;
+            var agree = document.getElementsByName("agree");
+
+            var valid = true;
+
+            if (firstName == "") {
+                document.getElementById("fname").focus();
+                document.getElementById("fname").style.backgroundColor = "yellow";
+                document.getElementById("fnameMessage").innerHTML = "* Required";
+                document.getElementById("fnameMessage").style.color = "red";
+                valid = false;
+            }
+
+            if (lastName == "") {
+                document.getElementById("lname").focus();
+                document.getElementById("lname").style.backgroundColor = "yellow";
+                document.getElementById("lnameMessage").innerHTML = "* Required";
+                document.getElementById("lnameMessage").style.color = "red";
+                valid = false;
+            }
+
+            if (email == "") {
+                document.getElementById("email").style.backgroundColor = "yellow";
+                document.getElementById("emailMessage").innerHTML = "* Required";
+                document.getElementById("emailMessage").style.color = "red";
+                valid = false;
+            }
+
+            var agreed = false;
+            for (var i = 0; i < agree.length; i++) {
+                if (agree[i].checked) {
+                    agreed = true;
+                    break;
+                }
+            }
+
+            if (!agreed) {
+                document.getElementById("agreeMessage").innerHTML = "* Required";
+                document.getElementById("agreeMessage").style.color = "red";
+                valid = false;
+            } else {
+                document.getElementById("agreeMessage").innerHTML = "";
+            }
+
+            return valid;
+        }
+    </script>
+
+</head>
+
+<body style="background-color: blanchedalmond;">
+    <div style="margin-left: 35px;">
+        <h1> Contact Us!</h1>
+        <p></p>
+        <form>
+            <p> First Name: <input type="text" id="fname">&nbsp;<span id="fnameMessage"></span></p>
+            <p> Last Name: <input type="text" id="lname">&nbsp;<span id="lnameMessage"></span></p>
+            <p> Email: <input type="text" id="email">&nbsp;<span id="emailMessage"></span></p>
+            <p> I accept the terms of agreement <br>
+                <input type="radio" name="agree" value="yes"> Agree
+                <input type="radio" name="agree" value="no"> Disagree
+                <span id="agreeMessage" style="color: red;"></span>
+            </p>
+            <button id="btnSubmit" class="btn btn-primary" onclick="return checkboxes();">Submit</button>
+        </form>
+        <p><a href="homepage-21">Home Page</a>&nbsp;|&nbsp;<a href="secondpage-14">Poem</a></p>
+    </div>
+</body>
+
+</html>
+
+
+  
