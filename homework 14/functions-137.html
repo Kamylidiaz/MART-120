@@ -1,0 +1,188 @@
+<html>
+<head>
+    <title>Game</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.min.js"></script>
+</head>
+<body>
+    <script>
+        var characterX = 100;
+        var characterY = 100;
+        var up = 38;
+        var down = 40;
+        var left = 37;
+        var right = 39;
+
+        function getRandomNumber(max) {
+            return Math.floor(Math.random() * max);
+        }
+
+        var pinkTriangles = [];
+        var purpleTriangles = [];
+
+        var mouseShapeX;
+        var mouseShapeY;
+        var showMouseShape = false;
+
+        function setup() {
+            createCanvas(500, 600);
+
+            for (var i = 0; i < 5; i++) {
+                pinkTriangles.push({
+                    x: getRandomNumber(500),
+                    y: getRandomNumber(600),
+                    speedX: Math.floor(Math.random() * (Math.floor(Math.random() * 5)) + 1),
+                    speedY: Math.floor(Math.random() * (Math.floor(Math.random() * 5)) + 1),
+                    size: getRandomNumber(30) + 10,
+                    color: color(random(255), random(255), random(255))
+                });
+
+                purpleTriangles.push({
+                    x: getRandomNumber(500),
+                    y: getRandomNumber(600),
+                    speedX: Math.floor(Math.random() * (Math.floor(Math.random() * 5)) + 1),
+                    speedY: Math.floor(Math.random() * (Math.floor(Math.random() * 5)) + 1)
+                });
+            }
+
+            randomMovement();
+            createCharacter(200, 350);
+        }
+
+        function draw() {
+            background('lavender');
+            stroke(0);
+            fill(0);
+
+            createBorders(10);
+
+            if (characterX > width && characterY > width - 50) {
+                fill('pink');
+            } else if (characterY < height / 2) {
+                fill('blue');
+            } else {
+                fill('red');
+            }
+
+            exitSign();
+            drawCharacter();
+            characterMovement();
+
+            randomMovement();
+
+            for (var i = 0; i < pinkTriangles.length; i++) {
+                drawTriangle(pinkTriangles[i].x, pinkTriangles[i].y, pinkTriangles[i].size, pinkTriangles[i].color);
+            }
+
+            enemy2();
+
+            for (var i = 0; i < purpleTriangles.length; i++) {
+                drawPurpleTriangle(purpleTriangles[i].x, purpleTriangles[i].y);
+                purpleTriangles[i].x += purpleTriangles[i].speedX;
+                purpleTriangles[i].y += purpleTriangles[i].speedY;
+                enemyBound(purpleTriangles, i);
+            }
+
+            exitMessage();
+
+            if (showMouseShape) {
+                fill(120, 130, 140);
+                circle(mouseShapeX, mouseShapeY, 25);
+            }
+        }
+
+        function randomMovement() {
+            for (var i = 0; i < pinkTriangles.length; i++) {
+                pinkTriangles[i].x += pinkTriangles[i].speedX;
+                pinkTriangles[i].y += pinkTriangles[i].speedY;
+                enemyBound(pinkTriangles, i);
+            }
+        }
+
+        function drawTriangle(x, y, size, color) {
+            noStroke();
+            fill(color);
+            triangle(x, y - size / 2, x - size, y + size / 2, x + size, y + size / 2);
+        }
+
+        function drawPurpleTriangle(x, y) {
+            fill('purple');
+            triangle(x, y - 10, x - 10, y + 10, x + 10, y + 10);
+        }
+
+        function characterMovement() {
+            if (keyIsDown(up)) {
+                characterY -= 10;
+            }
+            if (keyIsDown(down)) {
+                characterY += 10;
+            }
+            if (keyIsDown(left)) {
+                characterX -= 10;
+                console.log("movement: " + characterX);
+            }
+            if (keyIsDown(right)) {
+                characterX += 10;
+            }
+        }
+
+        function createCharacter(x, y) {
+            characterX = x;
+            characterY = y;
+            console.log(characterX);
+        }
+
+        function drawCharacter() {
+            fill('green');
+            rect(characterX - 12.5, characterY - 12.5, 25, 25);
+        }
+
+        function createBorders(thickness) {
+            fill('#FFA500')
+            rect(0, 0, width, thickness);
+            rect(0, 0, thickness, height);
+            rect(0, height - thickness, width, thickness);
+            rect(width - thickness, 0, thickness, height - 50);
+        }
+
+        function exitSign() {
+            textSize(16);
+            text("EXIT", width - 50, height - 50)
+        }
+
+        function exitMessage() {
+            if (characterX > width && characterY > width - 50) {
+                fill('#800080');
+                stroke(5);
+                textSize(26);
+                text("You Win!", width / 2 - 50, height / 2 - 50);
+            } else {
+                fill('lavender');
+                noStroke();
+                rect(width / 2 - 50, height / 2 - 50, 100, 26);
+            }
+        }
+
+        function mouseClicked() {
+            mouseShapeX = mouseX;
+            mouseShapeY = mouseY;
+            showMouseShape = true;
+        }
+
+        function enemy2() {
+            for (var i = 0; i < purpleTriangles.length; i++) {
+                drawPurpleTriangle(purpleTriangles[i].x, purpleTriangles[i].y);
+            }
+        }
+
+        function enemyBound(triangles, index) {
+            if (triangles[index].x > width || triangles[index].x < 0) {
+                triangles[index].x = getRandomNumber(500);
+            }
+            if (triangles[index].y > height || triangles[index].y < 0) {
+                triangles[index].y = getRandomNumber(600);
+            }
+        }
+    </script>
+</body>
+</html>
+
