@@ -1,0 +1,319 @@
+<html>
+<head>
+    <title>Build A Wacky Friend!</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.min.js"></script>
+    <style>
+        @font-face {
+        font-family: 'Lucida Handwriting';
+        src: url('https://fonts.gstatic.com/s/lucidahandwriting/v10/0QInMXBegB2J_dVSAlJZBPiIn1Iw.woff2') format('woff2');
+        }
+
+        body {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Lucida Handwriting', cursive, Arial, sans-serif;
+            color: #df8714; 
+            overflow: hidden; 
+            background: linear-gradient(to bottom,  #87CEEB, #4682B4); 
+        }
+    </style>
+</head>
+<body>
+    <script>
+        let SnowmanCenterX, bottomY;
+        let leftStickX, leftStickY, rightStickX, rightStickY;
+        let leftStickDragging = false;
+        let rightStickDragging = false;
+        let leftStickAngle = 0;
+        let rightStickAngle = 0;
+        let hatBaseX, hatBaseY, hatTopX, hatTopY;
+        let buttons = [];
+        let snowflakes = [];
+        let lightPoles = [];
+
+        function setup() {
+            createCanvas(800, 600);
+            SnowmanCenterX = width / 2;
+            bottomY = height - 50;
+            randomizeHatPositions();
+            randomizeButtonPositions();
+            leftStickX = random(0, width - 10);
+            leftStickY = random(0, height - 50);
+            rightStickX = random(0, width - 10);
+            rightStickY = random(0, height - 50);
+
+            // snowflakes
+            for (let i = 0; i < 50; i++) {
+                snowflakes.push(new Snowflake());
+            }
+
+            // light poles
+            for (let i = 0; i < 5; i++) {
+                lightPoles.push(new LightPole(i * width / 5));
+            }
+        }
+
+        function draw() {
+            background('#ADD8E6'); // blue of canvas
+            stroke(255); // Stroke color for shapes
+            noFill(); // No fill for the rectangle
+
+            // coordinates for canvas
+            let centerX = width / 2;
+            let centerY = height / 2;
+
+            // coordinates for snowman
+            let SnowmancenterX = width / 2;
+            let snowmanBottomY = height - 50;
+
+            //Happy Holidays 
+            fill('#a17f1a');
+            textSize(42);
+            textAlign(CENTER, CENTER);
+            text("Happy Holidays", width / 2, 50);
+
+            //instructions
+            fill('white');
+            textSize(18);
+            textAlign(CENTER, CENTER);
+            text("Drag and drop the pieces to build a friend!", width / 2, 90);
+
+
+            // street
+            fill('#808080'); 
+            rect(0, snowmanBottomY, width, height - snowmanBottomY);
+
+            // candy cane poles
+            for (let pole of lightPoles) {
+                pole.display();
+            }
+
+            // snowman
+            fill('white');
+            ellipse(SnowmancenterX, snowmanBottomY, 100, 100); // Bottom circle (body)
+            fill('white');
+            ellipse(SnowmancenterX, snowmanBottomY - 85, 70, 70); // Middle circle
+            fill('white');
+            ellipse(SnowmancenterX, snowmanBottomY - 145, 50, 50); // Top circle
+
+            // eyes
+            fill('black');
+            ellipse(SnowmancenterX - 10, snowmanBottomY - 155, 10, 10); // Left eye
+            ellipse(SnowmancenterX + 10, snowmanBottomY - 155, 10, 10); // Right eye
+
+            // mouth
+            fill('black');
+            arc(SnowmancenterX, snowmanBottomY - 143, 30, 20, 0, PI); // Mouth
+
+            // hat
+            drawHat();
+
+            // Draw left stick
+            push();
+            translate(leftStickX + 5, leftStickY); // Move the rotation point to the top center of the stick
+            rotate(leftStickAngle);
+            fill('brown');
+            rect(-5, 0, 10, 50);
+            pop();
+
+            // Draw right stick
+            push();
+            translate(rightStickX + 5, rightStickY); // Move the rotation point to the top center of the stick
+            rotate(rightStickAngle);
+            fill('brown');
+            rect(-5, 0, 10, 50);
+            pop();
+
+            // stick rotation
+            leftStickAngle += 0.05;
+            rightStickAngle += 0.05;
+
+            // Draw buttons
+            drawButtons();
+
+            // draw snowflakes
+            for (let flake of snowflakes) {
+                flake.update();
+                flake.display();
+            }
+        }
+
+        function drawHat() {
+            // hat base
+            fill('black');
+            rect(hatBaseX, hatBaseY, 70, 10);
+
+            // hat top
+            fill('black');
+            rect(hatTopX, hatTopY, 40, 40);
+        }
+
+        function drawButtons() {
+            for (let button of buttons) {
+                fill('darkgreen');
+                ellipse(button.x, button.y, 10, 10);
+            }
+        }
+
+        function randomizeHatPositions() {
+            hatBaseX = random(0, width - 70);
+            hatBaseY = random(0, bottomY - 150);
+            hatTopX = random(0, width - 40);
+            hatTopY = random(0, bottomY - 180);
+        }
+
+        function randomizeButtonPositions() {
+            for (let i = 0; i < 2; i++) {
+                buttons.push({
+                    x: random(0, width),
+                    y: random(0, height),
+                    size: 20  
+                });
+            }
+            for (let i = 0; i < 2; i++) {
+                buttons.push({
+                    x: random(0, width),
+                    y: random(0, height),
+                    size: 10 
+                });
+            }
+        }
+
+        class Snowflake {
+            constructor() {
+                this.x = random(width);
+                this.y = random(height);
+                this.radius = random(2, 6);
+                this.speed = random(1, 3);
+            }
+
+            update() {
+                this.y += this.speed;
+                if (this.y > height) {
+                    // Reset snowflake position to the top
+                    this.y = random(-10, 0);
+                    this.x = random(width);
+                }
+            }
+
+            display() {
+                fill(255);
+                noStroke();
+                ellipse(this.x, this.y, this.radius * 2, this.radius * 2);
+            }
+        }
+
+        class LightPole {
+            constructor(x) {
+                this.x = x;
+                this.y = bottomY - 1;
+            }
+
+            display() {
+                // Draw candy cane pole
+                fill('white'); //white stripe
+                rect(this.x, this.y - 150, 10, 150); // Pole
+                fill('#FF0000'); // red stripes
+                for (let i = 0; i < 3; i++) {
+                    rect(this.x, this.y - 150 + i * 50, 10, 25); // Stripes
+                }
+            }
+        }
+
+        function mousePressed() {
+            // if the mouse is over the left stick
+            if (mouseX > leftStickX && mouseX < leftStickX + 10 && mouseY > leftStickY && mouseY < leftStickY + 50) {
+                leftStickDragging = true;
+            }
+
+            // if the mouse is over the right stick
+            if (mouseX > rightStickX && mouseX < rightStickX + 10 && mouseY > rightStickY && mouseY < rightStickY + 50) {
+                rightStickDragging = true;
+            }
+
+            // if the mouse is over the hat base
+            if (mouseX > hatBaseX && mouseX < hatBaseX + 70 && mouseY > hatBaseY && mouseY < hatBaseY + 10) {
+                hatBaseDragging = true;
+            }
+
+            //  if the mouse is over the hat top
+            if (mouseX > hatTopX && mouseX < hatTopX + 40 && mouseY > hatTopY && mouseY < hatTopY + 40) {
+                hatTopDragging = true;
+            }
+
+            // if the mouse is over any button
+            for (let button of buttons) {
+                let distance = dist(mouseX, mouseY, button.x, button.y);
+                if (distance < button.size / 2) { // Using the button's radius for correct comparison
+                    button.dragging = true;
+                    button.offsetX = button.x - mouseX;
+                    button.offsetY = button.y - mouseY;
+                    break;  // Stop checking other buttons once a button is clicked
+                }
+            }
+        }
+
+        function mouseReleased() {
+            // Stop dragging the left stick
+            leftStickDragging = false;
+
+            // Stop dragging the right stick
+            rightStickDragging = false;
+
+            // Stop dragging the hat base
+            hatBaseDragging = false;
+
+            // Stop dragging the hat top
+            hatTopDragging = false;
+
+            // Stop dragging the buttons
+            for (let button of buttons) {
+                button.dragging = false;
+            }
+        }
+
+        function mouseDragged() {
+            // Move and rotate the left stick if dragged
+            if (leftStickDragging) {
+                leftStickX = mouseX - 5;
+                leftStickY = mouseY;
+                leftStickAngle = atan2(mouseY - leftStickY, mouseX - (leftStickX + 5));
+            }
+
+            // Move and rotate the right stick if dragged
+            if (rightStickDragging) {
+                rightStickX = mouseX - 5;
+                rightStickY = mouseY;
+                rightStickAngle = atan2(mouseY - rightStickY, mouseX - (rightStickX + 5));
+            }
+
+            // Move the hat base if dragged
+            if (hatBaseDragging) {
+                hatBaseX = mouseX - 35;
+                hatBaseY = mouseY - 5;
+            }
+
+            // Move the hat top if dragged
+            if (hatTopDragging) {
+                hatTopX = mouseX - 20;
+                hatTopY = mouseY - 20;
+            }
+
+            // Move and drag the buttons
+            for (let button of buttons) {
+                if (button.dragging) {
+                    button.x = mouseX + button.offsetX;
+                    button.y = mouseY + button.offsetY;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+
